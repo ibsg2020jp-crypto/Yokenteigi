@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>要件定義フォーム</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --main: #4f46e5;
+      --main-dark: #4338ca;
+      --soft: #eef2ff;
+      --danger: #dc2626;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 240px);
+    }
+    .app {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      padding: 18px;
+    }
+    header {
+      padding: 18px 4px 10px;
+    }
+    h1 {
+      font-size: clamp(1.55rem, 5vw, 2.4rem);
+      margin: 0 0 8px;
+      letter-spacing: -0.04em;
+    }
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+      padding: clamp(18px, 5vw, 34px);
+      margin-top: 18px;
+    }
+    .progress {
+      height: 10px;
+      background: #e0e7ff;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 16px 0 0;
+    }
+    .progress > div {
+      height: 100%;
+      width: 0%;
+      background: var(--main);
+      transition: width .25s ease;
+    }
+    .step-title {
+      font-size: 1.25rem;
+      margin: 0 0 8px;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.7;
+      margin: 0 0 20px;
+    }
+    label.question-label {
+      display: block;
+      font-weight: 700;
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      font: inherit;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 15px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--main);
+      box-shadow: 0 0 0 4px rgba(79,70,229,.12);
+    }
+    .choices {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 14px;
+      background: #fff;
+      cursor: pointer;
+      min-height: 50px;
+    }
+    .choice:has(input:checked) {
+      border-color: var(--main);
+      background: var(--soft);
+    }
+    .choice input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--main);
+      flex: 0 0 auto;
+    }
+    .other-box {
+      display: none;
+      margin-top: 12px;
+    }
+    .other-box.show { display: block; }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 48px;
+    }
+    .primary {
+      background: var(--main);
+      color: #fff;
+      flex: 1;
+    }
+    .primary:hover { background: var(--main-dark); }
+    .secondary {
+      background: #f3f4f6;
+      color: var(--text);
+    }
+    .danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+    .theme-grid, .export-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .big-option {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: left;
+      min-height: 120px;
+    }
+    .big-option strong { display: block; font-size: 1.15rem; margin-bottom: 8px; }
+    .big-option span { color: var(--muted); line-height: 1.6; }
+    .big-option.active {
+      border-color: var(--main);
+      background: var(--soft);
+    }
+    .output {
+      width: 100%;
+      min-height: 320px;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92rem;
+    }
+    .summary-list {
+      display: grid;
+      gap: 10px;
+    }
+    .summary-item {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+    }
+    .summary-item b { display: block; margin-bottom: 4px; }
+    .summary-item span { color: var(--muted); white-space: pre-wrap; }
+    .small {
+      font-size: .88rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+    @media (max-width: 560px) {
+      .app { padding: 12px; }
+      .buttons button { width: 100%; }
+      .primary { flex: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>要件定義フォーム</h1>
+      <p class="lead">ゲーム・便利ツールの要件を、選択中心で整理できます。「その他」は自由入力、「おまかせ」はAI補完前提です。</p>
+      <div class="progress"><div id="progressBar"></div></div>
+    </header>
+    <section class="card" id="screen"></section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'yokenteigi-form-v1';
+
+    const commonFields = [
+      { id:'projectName', label:'プロジェクト名', type:'text', placeholder:'例：Agu\'s RPG / メモ整理ツール' },
+      { id:'finalForm', label:'作りたいものの完成形', type:'radio', options:['ChatGPTアプリ内で使いたい','ブラウザで動くWebアプリ','単一HTMLで動くもの','スマホで使いやすいもの','PCでも使えるもの','あとで本格アプリ化したい','おまかせ','その他'], other:true },
+      { id:'platforms', label:'対応端末', type:'checkbox', options:['スマホ','PC','タブレット','ブラウザ','iPhone中心','Android中心','おまかせ','その他'], other:true },
+      { id:'design', label:'デザインの雰囲気', type:'checkbox', options:['シンプル','かわいい','レトロ','ゲーム風','近未来風','落ち着いた雰囲気','ポップ','ダーク','和風','ミニマル','おまかせ','その他'], other:true },
+      { id:'priority', label:'重要視すること', type:'checkbox', options:['使いやすさ','見た目の良さ','軽さ','スマホ対応','拡張しやすさ','長く使えること','短時間で完成すること','あとから改造しやすいこと','おまかせ','その他'], other:true },
+      { id:'avoid', label:'避けたいこと', type:'checkbox', options:['難しい操作','複雑すぎる画面','重い処理','外部サーバー必須','ログイン必須','課金必須','専門知識が必要な作り','後から変更しにくい構造','特になし','その他'], other:true },
+      { id:'freeNote', label:'その他、先に伝えたいこと', type:'textarea', placeholder:'任意。こだわり、参考イメージ、絶対に守りたい条件など。' }
+    ];
+
+    const gameFields = [
+      { id:'genre', label:'ゲームジャンル', type:'radio', options:['RPG','パズル','アドベンチャー','ノベルゲーム','放置ゲーム','育成ゲーム','探索ゲーム','脱出ゲーム','シミュレーション','ミニゲーム集','おまかせ','その他'], other:true },
+      { id:'players', label:'プレイ人数', type:'radio', options:['1人用','2人用','複数人用','オンライン対応','オフライン専用','おまかせ','その他'], other:true },
+      { id:'controls', label:'操作方法', type:'checkbox', options:['タップ','クリック','スワイプ','ドラッグ','キーボード','ボタン選択','自動進行','おまかせ','その他'], other:true },
+      { id:'playLength', label:'1プレイ/1ステージの長さ', type:'radio', options:['30秒以内','1分くらい','2分くらい','3〜5分','10分以上','長く遊べる形式','おまかせ','その他'], other:true },
+      { id:'gameGoal', label:'ゲームの目的', type:'checkbox', options:['敵を倒す','人を助ける','謎を解く','アイテムを集める','ステージをクリアする','キャラを育てる','スコアを伸ばす','物語を進める','世界を探索する','おまかせ','その他'], other:true },
+      { id:'clearCondition', label:'クリア条件', type:'checkbox', options:['ゴールに到達する','全員を助ける','アイテムを集める','謎を解く','一定時間生き残る','スコアを達成する','会話を完了する','ステージごとに変える','おまかせ','その他'], other:true },
+      { id:'failCondition', label:'失敗条件', type:'checkbox', options:['敵に触れる','時間切れ','HPがなくなる','アイテムを失う','間違った選択をする','失敗してもやり直せる','失敗条件なし','おまかせ','その他'], other:true },
+      { id:'gameFeatures', label:'ゲーム要素', type:'checkbox', options:['ステージ制','セーブ機能','アイテム','会話','マップ移動','ギミック','隠し要素','スコア','実績','成長要素','ランダム要素','おまかせ','その他'], other:true },
+      { id:'gimmicks', label:'ギミック', type:'checkbox', options:['スイッチ','鍵と扉','押せる箱','時間制限','順番に操作する仕掛け','隠し通路','NPC救出','ワープ','一方通行','視界制限','おまかせ','その他'], other:true },
+      { id:'graphics', label:'グラフィック', type:'radio', options:['ドット絵','レトロゲーム風','シンプルな図形','かわいいイラスト風','テキスト中心','絵文字中心','仮素材でよい','おまかせ','その他'], other:true },
+      { id:'sound', label:'サウンド', type:'radio', options:['なし','効果音だけ','BGMあり','ブラウザ標準の簡易音','あとで追加','おまかせ','その他'], other:true },
+      { id:'addiction', label:'中毒性・達成感', type:'checkbox', options:['短いステージをたくさん用意','クリア評価','星3評価','コレクション要素','実績','少しずつ難しくする','新ギミック解放','隠し要素','連続プレイしやすい構成','おまかせ','その他'], other:true },
+      { id:'addLater', label:'後から追加したいもの', type:'checkbox', options:['ステージ','キャラクター','アイテム','ギミック','ストーリー','マップ','敵','会話','エンディング','おまかせ','その他'], other:true }
+    ];
+
+    const toolFields = [
+      { id:'problem', label:'解決したい問題', type:'checkbox', options:['メモを整理したい','予定を管理したい','タスクを管理したい','お金を管理したい','買い物を楽にしたい','文章作成を楽にしたい','情報をまとめたい','計算を自動化したい','習慣を記録したい','学習を補助したい','おまかせ','その他'], other:true },
+      { id:'toolType', label:'ツールの種類', type:'radio', options:['メモツール','タスク管理','チェックリスト','家計簿','タイマー','記録アプリ','文章生成補助','計算ツール','比較表作成','テンプレート作成','おまかせ','その他'], other:true },
+      { id:'frequency', label:'使う頻度', type:'radio', options:['毎日','週に数回','たまに','必要な時だけ','長時間使う','短時間だけ使う','おまかせ','その他'], other:true },
+      { id:'inputs', label:'入力する情報', type:'checkbox', options:['テキスト','数字','日付','時刻','チェック項目','カテゴリ','タグ','画像','URL','ファイル','おまかせ','その他'], other:true },
+      { id:'outputs', label:'出力する情報', type:'checkbox', options:['一覧','表','Markdown','JSON','CSV','グラフ','カレンダー表示','チェックリスト','コピー用テキスト','おまかせ','その他'], other:true },
+      { id:'mustFeatures', label:'必須機能', type:'checkbox', options:['追加','編集','削除','検索','並び替え','カテゴリ分け','タグ付け','保存','コピー','ダウンロード','インポート','エクスポート','おまかせ','その他'], other:true },
+      { id:'saveMethod', label:'保存方法', type:'radio', options:['保存なし','ブラウザ内保存','JSONで保存','Markdownで保存','CSVで保存','クラウド保存','あとで決める','おまかせ','その他'], other:true },
+      { id:'screens', label:'画面構成', type:'checkbox', options:['入力画面','一覧画面','詳細画面','編集画面','設定画面','出力画面','履歴画面','検索画面','おまかせ','その他'], other:true },
+      { id:'flow', label:'操作フロー', type:'radio', options:['入力して保存','入力してすぐ出力','選択して結果を表示','チェックして管理','テンプレートから作成','履歴から再利用','おまかせ','その他'], other:true },
+      { id:'notification', label:'通知', type:'radio', options:['不要','必要','リマインダーが欲しい','締切通知が欲しい','ブラウザ通知が欲しい','あとで追加','おまかせ','その他'], other:true },
+      { id:'integration', label:'外部サービス連携', type:'checkbox', options:['不要','Googleカレンダー','Googleスプレッドシート','Notion','GitHub','メール','ChatGPT','API連携','あとで追加','おまかせ','その他'], other:true },
+      { id:'security', label:'セキュリティ・プライバシー', type:'checkbox', options:['個人情報は扱わない','ローカル保存だけにしたい','ログイン不要にしたい','外部送信しない','パスワード保護したい','共有機能は不要','専門的なのでおまかせ','その他'], other:true },
+      { id:'ux', label:'使いやすさの重視点', type:'checkbox', options:['入力が少ない','選択だけで使える','見やすい','迷わない','スマホで片手操作しやすい','すぐ結果が出る','あとから編集しやすい','データをなくしにくい','おまかせ','その他'], other:true }
+    ];
+
+    const state = loadState() || { screen:'theme', theme:null, step:0, data:{}, exportType:'markdown' };
+    const screen = document.getElementById('screen');
+    const progressBar = document.getElementById('progressBar');
+
+    function getFields() {
+      return [...commonFields, ...(state.theme === 'game' ? gameFields : toolFields)];
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
+    }
+
+    function escapeHtml(str='') {
+      return String(str).replace(/[&<>"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]));
+    }
+
+    function labelOf(id) {
+      return [...commonFields, ...gameFields, ...toolFields].find(f => f.id === id)?.label || id;
+    }
+
+    function valueText(id) {
+      const value = state.data[id];
+      const other = state.data[id + '__other'];
+      let base = Array.isArray(value) ? value.join(', ') : (value || '未入力');
+      if ((Array.isArray(value) ? value.includes('その他') : value === 'その他') && other) base += `（${other}）`;
+      return base;
+    }
+
+    function setProgress() {
+      let pct = 5;
+      if (state.screen === 'form') pct = Math.round(((state.step + 1) / getFields().length) * 78) + 10;
+      if (state.screen === 'confirm') pct = 92;
+      if (state.screen === 'export') pct = 100;
+      progressBar.style.width = `${pct}%`;
+    }
+
+    function render() {
+      setProgress();
+      if (state.screen === 'theme') return renderTheme();
+      if (state.screen === 'form') return renderForm();
+      if (state.screen === 'confirm') return renderConfirm();
+      if (state.screen === 'export') return renderExport();
+    }
+
+    function renderTheme() {
+      screen.innerHTML = `
+        <h2 class="step-title">何を作りますか？</h2>
+        <p class="hint">まずテーマを選ぶと、入力項目が切り替わります。</p>
+        <div class="theme-grid">
+          <button class="big-option ${state.theme === 'game' ? 'active' : ''}" data-theme="game"><strong>ゲーム</strong><span>ジャンル、操作、クリア条件、ギミック、達成感などを整理します。</span></button>
+          <button class="big-option ${state.theme === 'tool' ? 'active' : ''}" data-theme="tool"><strong>便利ツール</strong><span>解決したい問題、入力/出力、保存、画面構成などを整理します。</span></button>
+        </div>
+        <div class="buttons">
+          <button class="danger" id="resetBtn">最初から</button>
+          <button class="primary" id="startBtn">入力を始める</button>
+        </div>
+      `;
+      screen.querySelectorAll('[data-theme]').forEach(btn => {
+        btn.onclick = () => { state.theme = btn.dataset.theme; saveState(); render(); };
+      });
+      document.getElementById('startBtn').onclick = () => {
+        if (!state.theme) state.theme = 'game';
+        state.screen = 'form'; state.step = 0; saveState(); render();
+      };
+      document.getElementById('resetBtn').onclick = resetAll;
+    }
+
+    function renderForm() {
+      const fields = getFields();
+      const field = fields[state.step];
+      screen.innerHTML = `
+        <h2 class="step-title">${escapeHtml(field.label)}</h2>
+        <p class="hint">${state.step + 1} / ${fields.length}　未入力でも進めます。迷ったら「おまかせ」を選べます。</p>
+        <div id="fieldArea"></div>
+        <div class="buttons">
+          <button class="secondary" id="backBtn">戻る</button>
+          <button class="primary" id="nextBtn">${state.step === fields.length - 1 ? '確認へ' : '次へ'}</button>
+        </div>
+      `;
+      renderField(field, document.getElementById('fieldArea'));
+      document.getElementById('backBtn').onclick = () => {
+        if (state.step === 0) state.screen = 'theme'; else state.step--;
+        saveState(); render();
+      };
+      document.getElementById('nextBtn').onclick = () => {
+        if (state.step >= fields.length - 1) state.screen = 'confirm'; else state.step++;
+        saveState(); render();
+      };
+    }
+
+    function renderField(field, wrap) {
+      const saved = state.data[field.id];
+      if (field.type === 'text') {
+        wrap.innerHTML = `<label class="question-label" for="${field.id}">${escapeHtml(field.label)}</label><input id="${field.id}" type="text" placeholder="${escapeHtml(field.placeholder || '')}" value="${escapeHtml(saved || '')}">`;
+        wrap.querySelector('input').oninput = e => { state.data[field.id] = e.target.value; saveState(); };
+        return;
+      }
+      if (field.type === 'textarea') {
+        wrap.innerHTML = `<label class="question-label" for="${field.id}">${escapeHtml(field.label)}</label><textarea id="${field.id}" placeholder="${escapeHtml(field.placeholder || '')}">${escapeHtml(saved || '')}</textarea>`;
+        wrap.querySelector('textarea').oninput = e => { state.data[field.id] = e.target.value; saveState(); };
+        return;
+      }
+      const inputType = field.type === 'checkbox' ? 'checkbox' : 'radio';
+      const selected = inputType === 'checkbox' ? (Array.isArray(saved) ? saved : []) : saved;
+      wrap.innerHTML = `
+        <div class="choices">
+          ${field.options.map(opt => {
+            const checked = inputType === 'checkbox' ? selected.includes(opt) : selected === opt;
+            return `<label class="choice"><input type="${inputType}" name="${field.id}" value="${escapeHtml(opt)}" ${checked ? 'checked' : ''}><span>${escapeHtml(opt)}</span></label>`;
+          }).join('')}
+        </div>
+        ${field.other ? `<div class="other-box" id="otherBox"><label class="question-label" for="${field.id}Other">その他の内容</label><textarea id="${field.id}Other" placeholder="選択肢にない内容を書いてください">${escapeHtml(state.data[field.id + '__other'] || '')}</textarea></div>` : ''}
+      `;
+      const syncOther = () => {
+        const value = state.data[field.id];
+        const hasOther = Array.isArray(value) ? value.includes('その他') : value === 'その他';
+        const box = document.getElementById('otherBox');
+        if (box) box.classList.toggle('show', hasOther);
+      };
+      wrap.querySelectorAll('input').forEach(input => {
+        input.onchange = () => {
+          if (inputType === 'checkbox') {
+            state.data[field.id] = [...wrap.querySelectorAll('input:checked')].map(i => i.value);
+          } else {
+            state.data[field.id] = input.value;
+          }
+          saveState(); syncOther();
+        };
+      });
+      const otherText = document.getElementById(`${field.id}Other`);
+      if (otherText) otherText.oninput = e => { state.data[field.id + '__other'] = e.target.value; saveState(); };
+      syncOther();
+    }
+
+    function renderConfirm() {
+      const fields = getFields();
+      screen.innerHTML = `
+        <h2 class="step-title">確認</h2>
+        <p class="hint">内容を確認してください。戻って編集できます。</p>
+        <div class="summary-list">
+          ${fields.map(f => `<div class="summary-item"><b>${escapeHtml(f.label)}</b><span>${escapeHtml(valueText(f.id))}</span></div>`).join('')}
+        </div>
+        <div class="buttons">
+          <button class="secondary" id="backBtn">戻る</button>
+          <button class="primary" id="exportBtn">出力へ</button>
+        </div>
+      `;
+      document.getElementById('backBtn').onclick = () => { state.screen = 'form'; state.step = getFields().length - 1; saveState(); render(); };
+      document.getElementById('exportBtn').onclick = () => { state.screen = 'export'; saveState(); render(); };
+    }
+
+    function renderExport() {
+      const output = makeOutput(state.exportType);
+      screen.innerHTML = `
+        <h2 class="step-title">出力</h2>
+        <p class="hint">コピーしてChatGPTなどに渡せます。</p>
+        <div class="export-grid">
+          ${['markdown','compact','json','prompt'].map(type => `<button class="big-option ${state.exportType === type ? 'active' : ''}" data-export="${type}"><strong>${exportLabel(type)}</strong><span>${exportDesc(type)}</span></button>`).join('')}
+        </div>
+        <textarea class="output" id="output" readonly>${escapeHtml(output)}</textarea>
+        <div class="buttons">
+          <button class="secondary" id="backBtn">戻る</button>
+          <button class="secondary" id="downloadBtn">ダウンロード</button>
+          <button class="primary" id="copyBtn">コピー</button>
+        </div>
+        <p class="small" id="msg"></p>
+      `;
+      screen.querySelectorAll('[data-export]').forEach(btn => {
+        btn.onclick = () => { state.exportType = btn.dataset.export; saveState(); renderExport(); };
+      });
+      document.getElementById('backBtn').onclick = () => { state.screen = 'confirm'; saveState(); render(); };
+      document.getElementById('copyBtn').onclick = async () => {
+        await navigator.clipboard.writeText(document.getElementById('output').value);
+        document.getElementById('msg').textContent = 'コピーしました。';
+      };
+      document.getElementById('downloadBtn').onclick = () => downloadText(document.getElementById('output').value);
+    }
+
+    function exportLabel(type) {
+      return { markdown:'Markdown', compact:'短縮形式', json:'JSON', prompt:'ChatGPT用' }[type];
+    }
+    function exportDesc(type) {
+      return { markdown:'読みやすい要件定義書', compact:'トークン節約向け', json:'保存・再利用向け', prompt:'そのまま依頼できる文' }[type];
+    }
+
+    function dataObject() {
+      const obj = { theme: state.theme === 'game' ? 'ゲーム' : '便利ツール' };
+      getFields().forEach(f => obj[f.label] = valueText(f.id));
+      return obj;
+    }
+
+    function makeOutput(type) {
+      const obj = dataObject();
+      if (type === 'json') return JSON.stringify(obj, null, 2);
+      if (type === 'compact') return Object.entries(obj).map(([k,v]) => `${k}: ${String(v).replace(/\n/g, ' / ')}`).join('\n');
+      const md = `# 要件定義\n\n## テーマ\n${obj.theme}\n\n` + getFields().map(f => `## ${f.label}\n${valueText(f.id)}`).join('\n\n');
+      if (type === 'prompt') return `以下の入力内容をもとに、実装しやすい要件定義書を作成してください。専門的に未確定な項目や「おまかせ」は、妥当な内容を補完してください。\n\n${md}`;
+      return md;
+    }
+
+    function downloadText(text) {
+      const ext = state.exportType === 'json' ? 'json' : 'txt';
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `yokenteigi.${ext}`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function resetAll() {
+      if (!confirm('入力内容をすべて削除しますか？')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      Object.assign(state, { screen:'theme', theme:null, step:0, data:{}, exportType:'markdown' });
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
