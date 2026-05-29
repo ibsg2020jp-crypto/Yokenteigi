@@ -2,6 +2,8 @@
 
 ゲーム・便利ツール向けの、Googleフォーム風「要件定義入力フォーム」です。
 
+Webアプリはこちら: https://ibsg2020jp-crypto.github.io/Yokenteigi/
+
 選択式を中心に入力し、最後に以下の形式で出力できます。
 
 - Markdown
@@ -23,11 +25,13 @@
 
 ## 使い方
 
-1. `index.html` をブラウザで開く
+1. Webアプリを開く: https://ibsg2020jp-crypto.github.io/Yokenteigi/
 2. 「ゲーム」または「便利ツール」を選ぶ
 3. 質問に答える
 4. 確認画面で内容を見る
 5. Markdown / 短縮形式 / JSON / ChatGPT用プロンプトをコピーする
+
+ローカルで使う場合は、`index.html` をブラウザで開いてください。
 
 ## GitHub Pagesで公開する場合
 
